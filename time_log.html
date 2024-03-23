@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saint Francis of Assisi College - Bacoor Campus</title>
+
+<!-- Styling for the system -->
+<style>
+input[type="text"] {
+    transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="time"],
+button {
+    margin-bottom: 10px;
+    padding: 8px;
+    width: calc(50% - 16px);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th,
+table td {
+    padding: 10px;
+    text-align: center;
+}
+
+table th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#currentPST {
+    margin-top: 20px;
+    text-align: center;
+    color: #333;
+    font-weight: bold;
+}
+
+#currentDateTime {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Saint Francis of Assisi College - Bacoor Campus</h2>
+    <div>
+        <label for="username">Student's Full Name:</label>
+        <input type="text" id="username" placeholder="Enter your full name" oninput="smoothTransition(this)">
+    </div>
+    <!-- Display current date and time in local time zone -->
+    <div id="currentDateTime">Current Date and Time:</div>
+    <div>
+        <button onclick="logIn()">Log In</button>
+        <button onclick="logOut()">Log Out</button>
+    </div>
+    <table id="logTable">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Time In (PST)</th>
+                <th>Time Out (PST)</th>
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody id="logBody">
+            
+        </tbody>
+    </table>
+</div>
+
+<script>
+var logStatus = "out"; // Initial log status
+
+// Function to log in
+function logIn() {
+    if (logStatus === "out") {
+        var username = document.getElementById("username").value;
+        var timeIn = getCurrentPST();
+
+        var logTable = document.getElementById("logBody");
+
+        var newRow = logTable.insertRow(-1);
+        var cellUsername = newRow.insertCell(0);
+        var cellTimeIn = newRow.insertCell(1);
+        var cellTimeOut = newRow.insertCell(2);
+        var cellTotalHours = newRow.insertCell(3);
+
+        cellUsername.innerHTML = username;
+        cellTimeIn.innerHTML = timeIn;
+        cellTimeOut.innerHTML = "-";
+        cellTotalHours.innerHTML = "-";
+
+        logStatus = "in"; // Change log status to "in"
+
+        // Reset the input field value
+        document.getElementById("username").value = "";
+    } else {
+        alert("You are already logged in. Please log out first.");
+    }
+}
+
+// Function to log out
+function logOut() {
+    if (logStatus === "in") {
+        var logTable = document.getElementById("logBody");
+        var lastRow = logTable.rows.length - 1;
+        var timeOut = getCurrentPST();
+
+        logTable.rows[lastRow].cells[2].innerHTML = timeOut; // Update time out
+
+        // Calculate total hours
+        var timeIn = new Date(logTable.rows[lastRow].cells[1].innerHTML);
+        var timeOut = new Date(timeOut);
+        var totalHours = (timeOut - timeIn) / (1000 * 60 * 60); // Convert milliseconds to hours
+
+        logTable.rows[lastRow].cells[3].innerHTML = totalHours.toFixed(2); // Update total hours
+
+        logStatus = "out"; // Change log status to "out"
+    } else {
+        alert("You are not logged in. Please log in first.");
+    }
+}
+
+// Function to get current time in Philippine Standard Time (PST)
+function getCurrentPST() {
+    var now = new Date();
+    // Offset the current time by 8 hours to convert to PST (Philippine Standard Time)
+    now.setHours(now.getHours() + 8);
+    return formatDateTime(now);
+}
+
+// Function to format date and time as YYYY-MM-DD HH:MM:SS (Year-Month-Day Hours:Minutes:Seconds)
+function formatDateTime(date) {
+    var year = date.getFullYear();
+    var month = ("0" + (date.getMonth() + 1)).slice(-2);
+    var day = ("0" + date.getDate()).slice(-2);
+    var hours = ("0" + date.getHours()).slice(-2);
+    var minutes = ("0" + date.getMinutes()).slice(-2);
+    var seconds = ("0" + date.getSeconds()).slice(-2);
+
+    return year + "-" + month + "-" + day + " | " + hours + ":" + minutes + ":" + seconds;
+}
+
+// Update current date and time in local time zone, every second
+setInterval(updateCurrentDateTime, 1000);
+
+function updateCurrentDateTime() {
+    var currentDateTime = new Date().toLocaleString();
+    document.getElementById("currentDateTime").innerText = "Current Date and Time: " + currentDateTime;
+}
+function smoothTransition(inputField) {
+    inputField.style.border = "1px solid #ccc"; // Reset border style
+}
+</script>
+</body>
+</html>
+<!--Tapos na, Nice G!-->
